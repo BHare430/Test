@@ -67,20 +67,396 @@ class BattleShipBoard():
         self.AIPdir = 0
         print("The AI is now placing its ships...")
         #AI guessing variables
-        self.AIlastShot = "miss"
+        self.BSshotcount = 0
+        self.BSit = 0
+        self.AIlastShotBS = "miss"
         self.AIhitBS = []
-        self.AIhitBSdir = None
+
+        self.Cshotcount = 0
+        self.Cit = 0
+        self.AIlastShotC = "miss"
+        self.AIhitC = []
+
+        self.Sshotcount = 0
+        self.Sit = 0
+        self.AIlastShotS = "miss"
+        self.AIhitS = []
+
+        self.ACshotcount = 0
+        self.ACit = 0
+        self.AIlastShotAC = "miss"
+        self.AIhitAC = []
+
+        self.PTshotcount = 0
+        self.PTit = 0
+        self.AIlastShotPT = "miss"
+        self.AIhitPT = []
 
         self.setAIships()
-        #self.setBoardAI()
+        self.setBoardAI()
         input("The seas are set... Goodluck Captain! (press any button to continue): ")
         print(self)
         self.play()
+
+    def AITurn(self):
+        if self.AIlastShotBS == "hit" and len(self.AIhitBS) != 4:
+            self.shootBS()
+        elif self.AIlastShotC == "hit" and len(self.AIhitC) != 3:
+            self.shootC()
+        elif self.AIlastShotS == "hit" and len(self.AIhitS) != 3:
+            self.shootS()
+        elif self.AIlastShotAC == "hit" and len(self.AIhitAC) != 5:
+            self.shootAC()
+        elif self.AIlastShotPT == "hit" and len(self.AIhitPT) != 2:
+            self.shootPT()
+        else:
+            shotrow = self.LETTERS[random.randint(0, len(self.LETTERS) - 1)]
+            shotcol = random.randint(1, 10)
+            if self.LETTERS.__contains__(shotrow) and shotcol > 0 and shotcol < 11:
+                current = [shotrow, shotcol]
+                if self.AIShots.__contains__(current):
+                    self.AITurn()
+                else:
+                    self.searchAI(current)
+                    self.AIShots.append(current)
+            else:
+                self.playerTurn()
+
+    def shootBS(self):
+        if self.BSshotcount == 0:#shoot left of last position
+            if self.AIhitBS[self.BSit][1] == 1:
+                self.BSshotcount += 1
+            else:
+                shotrow = self.AIhitBS[self.BSit][0]
+                shotcol = self.AIhitBS[self.BSit][1] - 1
+                current = [shotrow, shotcol]
+                if self.AIShots.__contains__(current):
+                    self.BSshotcount += 1
+                else:
+                    self.searchAI(current)
+                    self.AIShots.append(current)
+        if self.BSshotcount == 1:#shoot right of last position
+            if self.AIhitBS[self.BSit][1] == 10:
+                self.BSshotcount += 1
+            else:
+                shotrow = self.AIhitBS[self.BSit][0]
+                shotcol = self.AIhitBS[self.BSit][1] + 1
+                current = [shotrow, shotcol]
+                if self.AIShots.__contains__(current):
+                    self.BSshotcount += 1
+                else:
+                    self.searchAI(current)
+                    self.AIShots.append(current)
+        if self.BSshotcount == 2:#shoot up of last position
+            if self.AIhitBS[self.BSit][0] == "A":
+                self.BSshotcount += 1
+            else:
+                shotrow = self.LETTERS[self.LETTERS.index(self.AIhitBS[self.BSit][0]) - 1]
+                shotcol = self.AIhitBS[self.BSit][1]
+                current = [shotrow, shotcol]
+                if self.AIShots.__contains__(current):
+                    self.BSshotcount += 1
+                else:
+                    self.searchAI(current)
+                    self.AIShots.append(current)
+        if self.BSshotcount == 3:#shoot down of last position
+            if self.AIhitBS[self.BSit][0] == "J":
+                self.BSshotcount += 1
+            else:
+                shotrow = self.LETTERS[self.LETTERS.index(self.AIhitBS[self.BSit][0]) + 1]
+                shotcol = self.AIhitBS[self.BSit][1]
+                current = [shotrow, shotcol]
+                if self.AIShots.__contains__(current):
+                    self.BSshotcount += 1
+                else:
+                    self.searchAI(current)
+                    self.AIShots.append(current)
+        if self.BSshotcount == 4:
+            self.BSit += 1
+            self.BSshotcount = 0
+            self.shootBS()
+
+    def shootC(self):
+        if self.Cshotcount == 0:#shoot left of last position
+            if self.AIhitC[self.Cit][1] == 1:
+                self.Cshotcount += 1
+            else:
+                shotrow = self.AIhitC[self.Cit][0]
+                shotcol = self.AIhitC[self.Cit][1] - 1
+                current = [shotrow, shotcol]
+                if self.AIShots.__contains__(current):
+                    self.Cshotcount += 1
+                else:
+                    self.searchAI(current)
+                    self.AIShots.append(current)
+        if self.Cshotcount == 1:#shoot right of last position
+            if self.AIhitC[self.Cit][1] == 10:
+                self.Cshotcount += 1
+            else:
+                shotrow = self.AIhitC[self.Cit][0]
+                shotcol = self.AIhitC[self.Cit][1] + 1
+                current = [shotrow, shotcol]
+                if self.AIShots.__contains__(current):
+                    self.Cshotcount += 1
+                else:
+                    self.searchAI(current)
+                    self.AIShots.append(current)
+        if self.Cshotcount == 2:#shoot up of last position
+            if self.AIhitC[self.Cit][0] == "A":
+                self.Cshotcount += 1
+            else:
+                shotrow = self.LETTERS[self.LETTERS.index(self.AIhitC[self.Cit][0]) - 1]
+                shotcol = self.AIhitC[self.Cit][1]
+                current = [shotrow, shotcol]
+                if self.AIShots.__contains__(current):
+                    self.Cshotcount += 1
+                else:
+                    self.searchAI(current)
+                    self.AIShots.append(current)
+        if self.Cshotcount == 3:#shoot down of last position
+            if self.AIhitC[self.Cit][0] == "J":
+                self.Cshotcount += 1
+            else:
+                shotrow = self.LETTERS[self.LETTERS.index(self.AIhitC[self.Cit][0]) + 1]
+                shotcol = self.AIhitC[self.Cit][1]
+                current = [shotrow, shotcol]
+                if self.AIShots.__contains__(current):
+                    self.Cshotcount += 1
+                else:
+                    self.searchAI(current)
+                    self.AIShots.append(current)
+        if self.Cshotcount == 4:
+            self.Cit += 1
+            self.Cshotcount = 0
+            self.shootC()
+
+    def shootS(self):
+        if self.Sshotcount == 0:#shoot left of last position
+            if self.AIhitS[self.Sit][1] == 1:
+                self.Sshotcount += 1
+            else:
+                shotrow = self.AIhitS[self.Sit][0]
+                shotcol = self.AIhitS[self.Sit][1] - 1
+                current = [shotrow, shotcol]
+                if self.AIShots.__contains__(current):
+                    self.Sshotcount += 1
+                else:
+                    self.searchAI(current)
+                    self.AIShots.append(current)
+        if self.Sshotcount == 1:#shoot right of last position
+            if self.AIhitS[self.Sit][1] == 10:
+                self.Sshotcount += 1
+            else:
+                shotrow = self.AIhitS[self.Sit][0]
+                shotcol = self.AIhitS[self.Sit][1] + 1
+                current = [shotrow, shotcol]
+                if self.AIShots.__contains__(current):
+                    self.Sshotcount += 1
+                else:
+                    self.searchAI(current)
+                    self.AIShots.append(current)
+        if self.Sshotcount == 2:#shoot up of last position
+            if self.AIhitS[self.Sit][0] == "A":
+                self.Sshotcount += 1
+            else:
+                shotrow = self.LETTERS[self.LETTERS.index(self.AIhitS[self.Sit][0]) - 1]
+                shotcol = self.AIhitS[self.Sit][1]
+                current = [shotrow, shotcol]
+                if self.AIShots.__contains__(current):
+                    self.Sshotcount += 1
+                else:
+                    self.searchAI(current)
+                    self.AIShots.append(current)
+        if self.Sshotcount == 3:#shoot down of last position
+            if self.AIhitS[self.Sit][0] == "J":
+                self.Sshotcount += 1
+            else:
+                shotrow = self.LETTERS[self.LETTERS.index(self.AIhitS[self.Sit][0]) + 1]
+                shotcol = self.AIhitS[self.Sit][1]
+                current = [shotrow, shotcol]
+                if self.AIShots.__contains__(current):
+                    self.Sshotcount += 1
+                else:
+                    self.searchAI(current)
+                    self.AIShots.append(current)
+        if self.Sshotcount == 4:
+            self.Sit += 1
+            self.Sshotcount = 0
+            self.shootS()
+
+    def shootAC(self):
+        if self.ACshotcount == 0:#shoot left of last position
+            if self.AIhitAC[self.ACit][1] == 1:
+                self.ACshotcount += 1
+            else:
+                shotrow = self.AIhitAC[self.ACit][0]
+                shotcol = self.AIhitAC[self.ACit][1] - 1
+                current = [shotrow, shotcol]
+                if self.AIShots.__contains__(current):
+                    self.ACshotcount += 1
+                else:
+                    self.searchAI(current)
+                    self.AIShots.append(current)
+        if self.ACshotcount == 1:#shoot right of last position
+            if self.AIhitAC[self.ACit][1] == 10:
+                self.ACshotcount += 1
+            else:
+                shotrow = self.AIhitAC[self.ACit][0]
+                shotcol = self.AIhitAC[self.ACit][1] + 1
+                current = [shotrow, shotcol]
+                if self.AIShots.__contains__(current):
+                    self.ACshotcount += 1
+                else:
+                    self.searchAI(current)
+                    self.AIShots.append(current)
+        if self.ACshotcount == 2:#shoot up of last position
+            if self.AIhitAC[self.ACit][0] == "A":
+                self.ACshotcount += 1
+            else:
+                shotrow = self.LETTERS[self.LETTERS.index(self.AIhitAC[self.ACit][0]) - 1]
+                shotcol = self.AIhitAC[self.ACit][1]
+                current = [shotrow, shotcol]
+                if self.AIShots.__contains__(current):
+                    self.ACshotcount += 1
+                else:
+                    self.searchAI(current)
+                    self.AIShots.append(current)
+        if self.ACshotcount == 3:#shoot down of last position
+            if self.AIhitAC[self.ACit][0] == "J":
+                self.ACshotcount += 1
+            else:
+                shotrow = self.LETTERS[self.LETTERS.index(self.AIhitAC[self.ACit][0]) + 1]
+                shotcol = self.AIhitAC[self.ACit][1]
+                current = [shotrow, shotcol]
+                if self.AIShots.__contains__(current):
+                    self.ACshotcount += 1
+                else:
+                    self.searchAI(current)
+                    self.AIShots.append(current)
+        if self.ACshotcount == 4:
+            self.ACit += 1
+            self.ACshotcount = 0
+            self.shootAC()
+
+    def shootPT(self):
+        if self.PTshotcount == 0:#shoot left of last position
+            if self.AIhitPT[self.PTit][1] == 1:
+                self.PTshotcount += 1
+            else:
+                shotrow = self.AIhitPT[self.PTit][0]
+                shotcol = self.AIhitPT[self.PTit][1] - 1
+                current = [shotrow, shotcol]
+                if self.AIShots.__contains__(current):
+                    self.PTshotcount += 1
+                else:
+                    self.searchAI(current)
+                    self.AIShots.append(current)
+        if self.PTshotcount == 1:#shoot right of last position
+            if self.AIhitPT[self.PTit][1] == 10:
+                self.PTshotcount += 1
+            else:
+                shotrow = self.AIhitPT[self.PTit][0]
+                shotcol = self.AIhitPT[self.PTit][1] + 1
+                current = [shotrow, shotcol]
+                if self.AIShots.__contains__(current):
+                    self.PTshotcount += 1
+                else:
+                    self.searchAI(current)
+                    self.AIShots.append(current)
+        if self.PTshotcount == 2:#shoot up of last position
+            if self.AIhitPT[self.PTit][0] == "A":
+                self.PTshotcount += 1
+            else:
+                shotrow = self.LETTERS[self.LETTERS.index(self.AIhitPT[self.PTit][0]) - 1]
+                shotcol = self.AIhitPT[self.PTit][1]
+                current = [shotrow, shotcol]
+                if self.AIShots.__contains__(current):
+                    self.PTshotcount += 1
+                else:
+                    self.searchAI(current)
+                    self.AIShots.append(current)
+        if self.PTshotcount == 3:#shoot down of last position
+            if self.AIhitPT[self.PTit][0] == "J":
+                self.PTshotcount += 1
+            else:
+                shotrow = self.LETTERS[self.LETTERS.index(self.AIhitPT[self.PTit][0]) + 1]
+                shotcol = self.AIhitPT[self.PTit][1]
+                current = [shotrow, shotcol]
+                if self.AIShots.__contains__(current):
+                    self.PTshotcount += 1
+                else:
+                    self.searchAI(current)
+                    self.AIShots.append(current)
+        if self.PTshotcount == 4:
+            self.PTit += 1
+            self.PTshotcount = 0
+            self.shootPT()
+
+    def searchAI(self, current):
+        if self.playerBS.__contains__(current) or self.playerC.__contains__(current) or self.playerS.__contains__(current) or self.playerAC.__contains__(current) or self.playerPT.__contains__(current):
+            print("One of our ships has been Hit!")
+            self.setHitAI(current)
+            self.checkSinkAI(current)
+        else:
+            print("The enemy has missed!")
+            self.setMissAI(current)
+
+    def setHitAI(self, coords):
+        for y in self.boardPlayer:
+            if y[0] == coords[0]:
+                y[coords[1]] = "[X]"
+    def setMissAI(self, coords):
+        for y in self.boardPlayer:
+            if y[0] == coords[0]:
+                y[coords[1]] = "[O]"
+
+    def checkSinkAI(self, current):
+        if self.playerBS.__contains__(current):
+            self.AIlastShotBS = "hit"
+            if len(self.playerBS) == 1:
+                print("Our Battleship has been sunk!")
+                self.AIhitBS.append(self.playerBS.pop())
+            else:
+                print("Our ship is still floating")
+                self.AIhitBS.append(self.playerBS.pop(self.playerBS.index(current)))
+        elif self.playerC.__contains__(current):
+            self.AIlastShotC = "hit"
+            if len(self.playerC) == 1:
+                print("Our Cruiser has been sunk!")
+                self.AIhitC.append(self.playerC.pop())
+            else:
+                print("Our ship is still floating")
+                self.AIhitC.append(self.playerC.pop(self.playerC.index(current)))
+        elif self.playerS.__contains__(current):
+            self.AIlastShotS = "hit"
+            if len(self.playerS) == 1:
+                print("Our Submarine has been sunk!")
+                self.AIhitS.append(self.playerS.pop())
+            else:
+                print("Our ship is still floating")
+                self.AIhitS.append(self.playerS.pop(self.playerS.index(current)))
+        elif self.playerAC.__contains__(current):
+            self.AIlastShotAC = "hit"
+            if len(self.playerAC) == 1:
+                print("Our Aircraft Carrier has been sunk!")
+                self.AIhitAC.append(self.playerAC.pop())
+            else:
+                print("Our ship is still floating")
+                self.AIhitAC.append(self.playerAC.pop(self.playerAC.index(current)))
+        elif self.playerPT.__contains__(current):
+            self.AIlastShotPT = "hit"
+            if len(self.playerPT) == 1:
+                print("Our PT Boat has been sunk!")
+                self.AIhitPT.append(self.playerPT.pop())
+            else:
+                print("Our ship is still floating")
+                self.AIhitPT.append(self.playerPT.pop(self.playerPT.index(current)))
 
     def play(self):
         print("Mission: Eliminate All Enemy Ships")
         while(self.finish() == 0):
             self.playerTurn()
+            print("Shells Incoming!")
             self.AITurn()
             print(self)
         print("Game Over")
@@ -99,7 +475,15 @@ class BattleShipBoard():
     def playerTurn(self):
         print("Awaiting your orders Captain!")
         shotrow = input("Input the column you wish to fire at: ").upper()
-        shotcol = int(input("Input the row you wish to fire at: "))
+        i = 0
+        while(i == 0):
+            try:
+                shotcol = int(input("Input the row you wish to fire at: "))
+                i+=1
+            except ValueError:
+                print("Please input an Integer.")
+
+
         if self.LETTERS.__contains__(shotrow) and shotcol > 0 and shotcol < 11:
             current = [shotrow, shotcol]
             if self.playerShots.__contains__(current):
@@ -164,20 +548,6 @@ class BattleShipBoard():
                 print("Enemy ship still floating")
                 self.AIPT.pop(self.AIPT.index(current))
 
-    def AITurn(self):
-        print("Shells Incoming!")
-        AIShoot #checks last shot, checks direction, fires next shot
-        
-
-
-
-
-
-
-
-
-
-
     def checkPlacePlayer(self):
         countBS = 0
         countC = 0
@@ -215,7 +585,14 @@ class BattleShipBoard():
 
     def setPlayerBS(self):
         self.playerBrow = str(input("Please enter the letter row you want to start your battleship on: ")).upper()
-        self.playerBcol = int(input("Please enter the number column you want to start your battleship on: "))
+        i = 0
+        while(i == 0):
+            try:
+                self.playerBcol = int(input("Please enter the number column you want to start your battleship on: "))
+                i += 1
+            except ValueError:
+                print("Please input an integer.")
+
         if(self.checkPos(1)):
             self.options = []
             print(self)
@@ -229,7 +606,13 @@ class BattleShipBoard():
 
     def setPlayerC(self):
         self.playerCrow = str(input("Please enter the letter row you want to start your Cruiser on: ")).upper()
-        self.playerCcol = int(input("Please enter the number column you want to start your Cruiser on: "))
+        i = 0
+        while (i == 0):
+            try:
+                self.playerCcol = int(input("Please enter the number column you want to start your Cruiser on: "))
+                i += 1
+            except ValueError:
+                print("Please input an integer.")
         if(self.checkPos(2)):
             self.options = []
             print(self)
@@ -243,7 +626,13 @@ class BattleShipBoard():
 
     def setPlayerS(self):
         self.playerSrow = str(input("Please enter the letter row you want to start your Submarine on: ")).upper()
-        self.playerScol = int(input("Please enter the number column you want to start your Submarine on: "))
+        i = 0
+        while (i == 0):
+            try:
+                self.playerScol = int(input("Please enter the number column you want to start your Sub on: "))
+                i += 1
+            except ValueError:
+                print("Please input an integer.")
         if (self.checkPos(3)):
             self.options = []
             print(self)
@@ -257,7 +646,13 @@ class BattleShipBoard():
 
     def setPlayerAC(self):
         self.playerACrow = str(input("Please enter the letter row you want to start your Aircraft Carrier on: ")).upper()
-        self.playerACcol = int(input("Please enter the number column you want to start your Aircraft Carrier on: "))
+        i = 0
+        while (i == 0):
+            try:
+                self.playerACcol = int(input("Please enter the number column you want to start your Aircraft Carrier on: "))
+                i += 1
+            except ValueError:
+                print("Please input an integer.")
         if (self.checkPos(4)):
             self.options = []
             print(self)
@@ -271,7 +666,13 @@ class BattleShipBoard():
 
     def setPlayerPT(self):
         self.playerPTrow = str(input("Please enter the letter row you want to start your PT boat on: ")).upper()
-        self.playerPTcol = int(input("Please enter the number column you want to start your PT boat on: "))
+        i = 0
+        while (i == 0):
+            try:
+                self.playerPTcol = int(input("Please enter the number column you want to start your PT Boat on: "))
+                i += 1
+            except ValueError:
+                print("Please input an integer.")
         if (self.checkPos(5)):
             self.options = []
             print(self)
